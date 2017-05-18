@@ -55,4 +55,9 @@ public class Sql2oTodoDaoTest {
         assertTrue(todos.size() != 0);
     }
 
+    @Test
+    public void no_todos_returns_an_empty_list() throws  Exception {
+        assertEquals(0, dao.findAll().size());
+    }
+
 }

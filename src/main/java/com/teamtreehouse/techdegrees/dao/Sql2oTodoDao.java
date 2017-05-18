@@ -46,9 +46,8 @@ public class Sql2oTodoDao implements TodoDao {
     public List<Todo> findAll() throws DaoException {
         String sql = "SELECT * FROM todos";
         try (Connection con = sql2o.open()) {
-            List<Todo> todos = con.createQuery(sql)
+            return con.createQuery(sql)
                     .executeAndFetch(Todo.class);
-            return todos;
         } catch (Sql2oException ex) {
             throw new DaoException(ex, "There was a problem adding the Todo");
         }
