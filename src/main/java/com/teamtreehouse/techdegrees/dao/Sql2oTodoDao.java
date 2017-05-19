@@ -34,12 +34,27 @@ public class Sql2oTodoDao implements TodoDao {
 
     @Override
     public void delete(Todo todo) throws DaoException {
-
+        String sql = "DELETE FROM todos WHERE id = :id";
+        try (Connection con = sql2o.open()) {
+            con.createQuery(sql)
+                    .bind(todo)
+                    .executeUpdate();
+        } catch (Sql2oException ex) {
+            throw new DaoException(ex, "There was a problem deleting the Todo");
+        }
     }
 
     @Override
     public void update(Todo todo) throws DaoException {
-
+        String sql = "UPDATE todos " +
+                "SET id = :id, name = :name, edited = :edited, completed = :completed";
+        try (Connection con = sql2o.open()) {
+            con.createQuery(sql)
+                    .bind(todo)
+                    .executeUpdate();
+        } catch (Sql2oException ex) {
+            throw new DaoException(ex, "There was a problem updating the Todo");
+        }
     }
 
     @Override
@@ -49,12 +64,18 @@ public class Sql2oTodoDao implements TodoDao {
             return con.createQuery(sql)
                     .executeAndFetch(Todo.class);
         } catch (Sql2oException ex) {
-            throw new DaoException(ex, "There was a problem adding the Todo");
+            throw new DaoException(ex, "There was a problem retrieving all Todos");
         }
     }
 
     @Override
     public Todo findById(Long id) throws DaoException {
-        return null;
+        String sql = String.format("SELECT * FROM todos WHERE id = %s", id);
+        try (Connection con = sql2o.open()) {
+            return con.createQuery(sql)
+                    .executeAndFetchFirst(Todo.class);
+        } catch (Sql2oException ex) {
+            throw new DaoException(ex, "There was a problem retrieving the Todo");
+        }
     }
 }
