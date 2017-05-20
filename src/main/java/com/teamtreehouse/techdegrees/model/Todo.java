@@ -13,6 +13,13 @@ public class Todo {
         this.completed = completed;
     }
 
+    public Todo(Long id, String name, boolean edited, boolean completed) {
+        this.id = id;
+        this.name = name;
+        this.edited  = edited;
+        this.completed = completed;
+    }
+
     public Long getId() {
         return id;
     }

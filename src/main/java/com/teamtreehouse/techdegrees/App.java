@@ -2,6 +2,7 @@ package com.teamtreehouse.techdegrees;
 
 
 import com.google.gson.Gson;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.teamtreehouse.techdegrees.dao.Sql2oTodoDao;
 import com.teamtreehouse.techdegrees.dao.TodoDao;
 import com.teamtreehouse.techdegrees.model.Todo;
@@ -9,6 +10,7 @@ import org.h2.store.LimitInputStream;
 import org.sql2o.Sql2o;
 
 import java.util.List;
+import java.util.Map;
 
 import static spark.Spark.*;
 
@@ -35,16 +37,14 @@ public class App {
 
         put("/api/v1/todos/:id", "application/json", ((request, response) -> {
             Long id = Long.parseLong(request.params("id"));
-            Todo todo = todoDao.findById(id);
+            String name = gson.fromJson(request.body(), Todo.class).getName();
+            boolean edited = gson.fromJson(request.body(), Todo.class).isEdited();
+            boolean completed = gson.fromJson(request.body(), Todo.class).isCompleted();
+            Todo todo = new Todo(id, name, edited, completed);
             todoDao.update(todo);
+            response.status(200);
             return todoDao.findAll();
         }), gson::toJson);
-
-        /*post("/api/v1/todos", "application/json", (request, response) -> {
-            Todo todo = gson.fromJson(request.body(), Todo.class);
-        });*/
-
-        //get("/blah", (req, res) -> "Hello!");
 
         after(((request, response) -> {
             response.type("application/json");
