@@ -37,7 +37,7 @@ public class Sql2oTodoDao implements TodoDao {
         String sql = "DELETE FROM todos WHERE id = :id";
         try (Connection con = sql2o.open()) {
             con.createQuery(sql)
-                    .bind(todo)
+                    .addParameter("id", todo.getId())
                     .executeUpdate();
         } catch (Sql2oException ex) {
             throw new DaoException(ex, "There was a problem deleting the Todo");

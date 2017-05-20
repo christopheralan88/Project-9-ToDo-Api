@@ -35,6 +35,13 @@ public class App {
             return todoDao.findAll();
         }), gson::toJson);
 
+        delete("/api/v1/todos/:id", "application/json", ((request, response) -> {
+            Todo todo = todoDao.findById(Long.parseLong(request.params("id")));
+            todoDao.delete(todo);
+            response.status(200);
+            return todoDao.findAll();
+        }), gson::toJson);
+
         put("/api/v1/todos/:id", "application/json", ((request, response) -> {
             Long id = Long.parseLong(request.params("id"));
             String name = gson.fromJson(request.body(), Todo.class).getName();
