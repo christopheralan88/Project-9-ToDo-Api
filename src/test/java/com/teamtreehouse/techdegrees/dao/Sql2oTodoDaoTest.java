@@ -6,10 +6,12 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
 import java.util.List;
+import java.util.function.ToDoubleBiFunction;
 
 import static org.junit.Assert.*;
 
@@ -58,6 +60,42 @@ public class Sql2oTodoDaoTest {
     @Test
     public void no_todos_returns_an_empty_list() throws  Exception {
         assertEquals(0, dao.findAll().size());
+    }
+
+    @Test
+    public void deleting_todos_works() throws Exception {
+        Todo todo = new Todo(3L,"todo1", false, false);
+        dao.add(todo);
+
+        dao.delete(todo);
+
+        assertTrue(dao.findById(3L) == null);
+    }
+
+    @Test
+    public void updating_todos_works() throws Exception {
+        Todo originalTodo = new Todo(4L, "todo4", false, false);
+        Todo newTodo = new Todo(4L, "todo4Updated", true, true);
+
+        dao.add(originalTodo);
+        dao.update(newTodo);
+
+        assertEquals(dao.findById(4L), newTodo);
+    }
+
+    @Test
+    public void finding_todos_by_id_works_correctly() throws Exception {
+        Todo todo = new Todo(1L,"todo", false, false);
+
+        dao.add(todo);
+        Todo retrievedTodo = dao.findById(1L);
+
+        assertEquals(todo, retrievedTodo);
+    }
+
+    @Test
+    public void findById_returns_null_if_cant_find_todo() throws Exception {
+        assertTrue(dao.findById(1L) == null);
     }
 
 }
