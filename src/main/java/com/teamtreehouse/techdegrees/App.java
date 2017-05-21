@@ -17,13 +17,20 @@ import static spark.Spark.*;
 public class App {
 
     public static void main(String[] args) {
+        String dataSource = "jdbc:h2:~/todos.db";
+        if (args.length == 2 ) {
+            port(Integer.parseInt(args[0]));
+            dataSource = args[1];
+        } else {
+            System.out.println("Expected two arguments: <port> <data source>");
+            System.exit(0);
+        }
+
         staticFileLocation("/public");
-        String connectionString = "jdbc:h2:~/todos.db;INIT=RUNSCRIPT from 'classpath:db/init.sql'";
+        String connectionString = String.format("%s;INIT=RUNSCRIPT from 'classpath:db/init.sql'", dataSource);
         Sql2o sql2o = new Sql2o(connectionString, "", "");
-        //Sql2o sql2o = new Sql2o("jdbc:h2:mem:sample;INIT=RUNSCRIPT from 'classpath:db/init.sql'" );
         TodoDao todoDao = new Sql2oTodoDao(sql2o);
         Gson gson = new Gson();
-
 
         get("/api/v1/todos", "application/json",
                 (request, response) -> todoDao.findAll(), gson::toJson);
