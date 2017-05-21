@@ -111,8 +111,8 @@ public class AppTest {
         values.put("completed", "false");
 
         ApiResponse response = client.request("PUT", "/api/v1/todos/" + originalTodo.getId(), gson.toJson(values));
-        JsonArray entries = (JsonArray) new JsonParser().parse(response.getBody());
-        Object name = ((JsonObject)entries.get(0)).get("name");
+        Todo[] todos = gson.fromJson(response.getBody(), Todo[].class);
+        String name = todos[0].getName();
 
         assertEquals(values.get("name"), name);
     }
